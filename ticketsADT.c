@@ -3,23 +3,35 @@
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
-#include "ticketsADT.h"
 
-typedef struct tFines{
-    char * whichFine;
-    size_t numberFine;
-} tFines;
+#define MEMORYERROR "wrong memory access"
+#define INVALIDARGUMENT "the argument is invalid"
+#define MEMORYEXIT 1
+#define totalMonths 12
 
-typedef struct tInfractions{
-    tFines * vecFines;
-    size_t possibleFines;
-    size_t dimFines;
-    size_t infractionID;
+typedef struct tYears{
+    size_t months[totalMonths];
+} tYears;
+
+typedef struct tInfranctions{
+    char * infractionName;
+    size_t mountMax;
+    struct tInfractions * tail;
 } tInfractions;
 
+
 typedef struct tAgencies{
+    char * agencyName;
+    size_t maxFine;
+    size_t minFine;
+    size_t maxMinDiff;
+    tYears * arrYears;
+    size_t dimYears;
+    tInfractions * first;
     struct tAgencies * tail;
-    char agencyName[100];
-    size_t maxMount;
-    size_t minMount;
-}
+} tAgencies;
+
+typedef struct ticketCDT{
+   tAgencies * first;
+} ticketcCDT;
+
