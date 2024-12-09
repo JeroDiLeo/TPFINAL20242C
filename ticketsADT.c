@@ -15,7 +15,7 @@ typedef struct tYears{
 
 typedef struct tInfranctions{
     char * infractionName;
-    size_t mountMax;
+    size_t fineCount; //How many times appears
     size_t dim;     //Dim real
     size_t posibleInfraction; //Espacio reservado
 } tInfractions;
@@ -34,5 +34,5 @@ typedef struct tAgencies{
 
 typedef struct ticketCDT{
    tAgencies * first;
-} ticketcCDT;
+} ticketCDT;
 
