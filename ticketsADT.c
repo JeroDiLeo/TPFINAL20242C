@@ -16,7 +16,8 @@ typedef struct tYears{
 typedef struct tInfranctions{
     char * infractionName;
     size_t mountMax;
-    struct tInfractions * tail;
+    size_t dim;     //Dim real
+    size_t posibleInfraction; //Espacio reservado
 } tInfractions;
 
 
