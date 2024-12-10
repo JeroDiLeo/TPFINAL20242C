@@ -216,7 +216,12 @@ static tAgencies * findOrCreateAgency(tAgencies * l, size_t id, const char * nam
     searchFineRecYTD(l->firstYTD, year, month, fineAmount); // either the caseses the YTD needs to be updated 
     return l;
 }
-
+/*(Mother Function), funtion that operates everything. It recieves a fine, and adds every valuable information to the data base 
+in favor of what we are told to store and to not store (example license plate doesnt matter, theres no algorithm that requires it)
+in case the funtion receives a new agency, adds it in alphabetical order to the agencies list, in the case of a new infraction for an
+agency, it adds it to the vector (even changes its dimension if required). After all that it updates the max, min and diff if needed
+and also updates the list responsible of saving the total fine mount pero month and year
+*/
 void addInfraction(ticketsADT ticket, size_t id, const char * name, const char * agency, size_t fineAmount, size_t year, size_t month){
     if(id <= 0 || !validDate(month, year)){ 
         exit(MEMORYEXIT); //check
@@ -224,14 +229,14 @@ void addInfraction(ticketsADT ticket, size_t id, const char * name, const char *
     ticket->first = findOrCreateAgency(ticket->first, id, name, agency, fineAmount, year, month, ticket->firstDiff); // recursive call to find agency
 }
 
-
+// access the max price of a fine in a certain agency
 int maxFines(ticketsADT ticket, size_t id, const char * agency){
     if(ticket == NULL || agency == NULL){
         perror(INVALIDARGUMENT);
-        exit(MEMORYEXIT); //check
+        exit(MEMORYEXIT); 
     }
     tAgencies * aux = findAgency(ticket->first,agency);
-    if( aux == NULL){ // we check what the recursive call returns, to no dereference a NULL pointer
+    if( aux == NULL){ // we check what the recursive call returns, to not dereference a NULL pointer
         return -1;
     }
      if( id < aux->posibleInfraction && aux->vecInfractions[id-1].infractionName != NULL){ // we check by infraction id if such infraction exists in this agency
@@ -240,7 +245,7 @@ int maxFines(ticketsADT ticket, size_t id, const char * agency){
      return -1; // case the infractions doesnt exist
 }
 
-
+//function that returns the sum of the total fine mount from january that year until a certain month
 int YTDfines(ticketsADT ticket, const char * agency,size_t year,size_t month){
     if(ticket == NULL || !validDate(month, year) || agency == NULL){ //case of invalid parameters
         perror(INVALIDARGUMENT);
@@ -263,54 +268,54 @@ int YTDfines(ticketsADT ticket, const char * agency,size_t year,size_t month){
     }
     return sum; // we return the sum
 }
-
+// recursive funtion that returns the agency in search or NULL if not found
 static tAgenDiff * findAgencyDiff(tAgenDiff * l, const char * agency){
     int c;
-    if(agency==NULL){
+    if(agency==NULL){ // if the l provided was already NULL (this funtion does NOT add agencies) 
         perror(INVALIDARGUMENT);
         exit(MEMORYEXIT);
     }
-    if(l == NULL ||(c = strcasecmp(l->agencyName, agency)) == 0){
+    if(l == NULL ||(c = strcasecmp(l->agencyName, agency)) == 0){ //recursion will stop if agency not found, return NULL, or if agency was found 
         return l;
     }
     return findAgencyDiff(l->tail, agency);
 }
-
+// access the min fine amount from an agency
 int minAgencyFines(ticketsADT ticket, const char * agency){
     if(ticket == NULL || agency == NULL){
         perror(INVALIDARGUMENT);
-        exit(MEMORYEXIT); //check
+        exit(MEMORYEXIT); 
     }
 
     tAgenDiff * aux = findAgencyDiff(ticket->firstDiff, agency);
-    if(aux == NULL){
+    if(aux == NULL){ //if the agency wasnt found, return -1 which would be a not found indicator
         return -1;
     }
     return aux->min;
 }
 
-
+// access the max fine amount from an agency
 int maxAgencyFines(ticketsADT ticket, const char * agency){
     if(ticket == NULL || agency == NULL){
         perror(INVALIDARGUMENT);
-        exit(MEMORYEXIT); //check
+        exit(MEMORYEXIT); 
     }
 
     tAgenDiff * aux = findAgencyDiff(ticket->firstDiff, agency);
-    if(aux == NULL){
+    if(aux == NULL){ //if the agency wasnt found, return -1 which would be a not found indicator
         return -1;
     }
     return aux->max;
 }
-
+//access the difference between the max fine and the mine fine
 int diffAgencyFines(ticketsADT ticket,const char * agency){
     if(ticket == NULL || agency == NULL){
         perror(INVALIDARGUMENT);
-        exit(MEMORYEXIT); //check
+        exit(MEMORYEXIT); 
     }
 
     tAgenDiff * aux = findAgencyDiff(ticket->firstDiff, agency);
-    if(aux == NULL){
+    if(aux == NULL){ //if the agency wasnt found, return -1 which would be a not found indicator
         return -1;
     }
     return aux->diff;
