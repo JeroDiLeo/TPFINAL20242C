@@ -24,20 +24,28 @@ typedef struct tInfranctions{
 
 typedef struct tAgencies{
     char * agencyName;
-    size_t maxFine;
-    size_t minFine;
-    size_t maxMinDiff;
     tYears * firstYTD;
     size_t dimYears;
+    size_t minFine;
+    size_t maxFine;
     tInfractions * vecInfractions;
     size_t dimReal;     //Dim real
     size_t posibleInfraction; //Espacio reservado
     struct tAgencies * tail;
 }tAgencies;
 
+typedef struct tAgenDiff{ // agency in alphabetical order and descending order of diff
+    char * agencyName;
+    size_t diff;
+    size_t max;
+    size_t min;
+    struct tAgenDiff * tail;
+}tAgenDiff;
+
 typedef struct ticketsCDT{
    tAgencies * first;
-   
+   tAgenDiff * firstDiff;
+
 }ticketsCDT;
 
 // function that validates the date (defensive programming)
@@ -118,18 +126,50 @@ static void createNewInfraction(tAgencies * l,const  char * name, size_t id){
     l->vecInfractions[id-1].infractionName = copyString(name); //add new infraction
 }
 
-static void modifyCreateAgency(tAgencies * l, size_t year, size_t month,size_t fineAmount){
-    if(fineAmount > l->maxFine){  // update max,min and diff fines in the agency, if necessary 
-        l->maxFine = fineAmount;
-    }else if(fineAmount < l->minFine){
-        l->minFine = fineAmount;
+static int checkDiff(size_t max, size_t min, size_t amount){
+    return amount > max || amount < min;
+}
+
+static tAgenDiff * changeDiff(tAgenDiff * l, char * agency, size_t amount){ // changes the list of diff agency, same func as exercise 3 in the second exam this semester
+    int c;
+    if( l == NULL || (c = strcasecmp(l->agencyName, agency)) == 0){ // stops when it found the agency or it reached the end
+        if(l == NULL){ // case it reached the end, we have to add the agency 
+            tAgenDiff * new = malloc(sizeof(tAgenDiff));
+            new->max = amount;
+            new->min = amount;
+            new->diff = 0;
+            new->agencyName = copyString(agency);
+            new->tail = l;
+            return new;
+        }else{ // case it found the agency, we modify the max, min and diff
+            if(amount > l->max){
+                l->max = amount;
+            }
+            l->min = amount;
+            l->diff = l->max - l->min;
+        }
+        return l;
     }
-    l->maxMinDiff = l->maxFine - l->minFine;
-    l->firstYTD = searchFineRecYTD(l->firstYTD, year, month, fineAmount); //update YTD data
+    l->tail = checkDiff(l->tail, agency, amount); // recursive call (stack type recursion)
+
+    tAgenDiff * aux = l->tail; // aux node to compare current node with its tail
+    size_t b = aux->diff - l->diff; 
+    if(b > 0){ // if aux diff is bigger than we swap positions
+        l->tail = aux->tail;
+        aux->tail = l;
+        return aux;
+    }else if(b == 0){ //case they have same amount of diff
+        if(c > 0){ //since we got here, the agency provided is the same as its tail why we use the same c (responsible for modifications), we swap in alphabetical order
+            l->tail = aux->tail;
+            aux->tail = l;
+            return aux;
+        }
+    }
+    return l;
 }
 
 // searches if the agency exists, in the case it doesnt, it creates it in memory modifying the lists
-static tAgencies * findOrCreateAgency(tAgencies * l, size_t id, const char * name, const char * agency, size_t fineAmount, size_t year, size_t month){
+static tAgencies * findOrCreateAgency(tAgencies * l, size_t id, const char * name, const char * agency, size_t fineAmount, size_t year, size_t month,tAgenDiff * firstDiff){
     int c;
     if(l == NULL || (c = strcasecmp(l->agencyName, agency)) > 0){  // case the agency doesnt exist
         tAgencies * new = calloc(1, sizeof(tAgencies));
@@ -142,10 +182,11 @@ static tAgencies * findOrCreateAgency(tAgencies * l, size_t id, const char * nam
         createNewInfraction(new, name, id); // function that creates the new infraction
         new->dimReal++;
         new->posibleInfraction = id;
-        modifyCreateAgency(new, year, month, fineAmount); // updates the YTD data
+        searchFineRecYTD(new->firstYTD, year, month, fineAmount); // updates the YTD data
+        firstDiff = changeDiff(firstDiff, agency, fineAmount); // CHANGE DIF
         return new;
     }else if( c < 0){  // case the agency is lower than the one we want to fine (in alphabetical terms)
-        l->tail = findOrCreateAgency(l->tail, id,name,agency,fineAmount, year, month);
+        l->tail = findOrCreateAgency(l->tail, id,name,agency,fineAmount, year, month, firstDiff);
         return l;
     } // case we found the agency
     if(id > l->posibleInfraction){  // if the id of infractions is higher than the dimension we expand the array
@@ -158,7 +199,10 @@ static tAgencies * findOrCreateAgency(tAgencies * l, size_t id, const char * nam
         }
         l->vecInfractions[id-1].fineCount++;
     }
-    modifyCreateAgency(l, year, month, fineAmount); // either the caseses the YTD needs to be updated 
+    if(checkDiff(l->maxFine, l->minFine,fineAmount)){
+    firstDiff = changeDiff(firstDiff, agency, fineAmount);
+    } // checks 
+    searchFineRecYTD(l->firstYTD, year, month, fineAmount); // either the caseses the YTD needs to be updated 
     return l;
 }
 
@@ -166,11 +210,11 @@ void addInfraction(ticketsADT ticket, size_t id, const char * name, const char *
     if(id <= 0 || !validDate(month, year)){ 
         exit(MEMORYERROR); //check
     }
-    ticket->first = findOrCreateAgency(ticket->first, id, name, agency, fineAmount, year, month); // recursive call to find agency
+    ticket->first = findOrCreateAgency(ticket->first, id, name, agency, fineAmount, year, month, ticket->firstDiff); // recursive call to find agency
 }
 
 
-size_t maxFines(ticketsADT ticket, size_t id, const char * agency){
+int maxFines(ticketsADT ticket, size_t id, const char * agency){
     if(ticket == NULL || agency == NULL){
         exit(MEMORYEXIT); //check
     }
@@ -185,7 +229,7 @@ size_t maxFines(ticketsADT ticket, size_t id, const char * agency){
 }
 
 
-size_t YTDfines(ticketsADT ticket, const char * agency,size_t year,size_t month){
+int YTDfines(ticketsADT ticket, const char * agency,size_t year,size_t month){
     if(ticket == NULL || !validDate(month, year || agency == NULL)){ //case of invalid parameters
         exit(MEMORYEXIT);
     }
@@ -207,40 +251,52 @@ size_t YTDfines(ticketsADT ticket, const char * agency,size_t year,size_t month)
     return sum; // we return the sum
 }
 
-size_t minAgencyFines(ticketsADT ticket, const char * agency){
-    if(ticket == NULL || agency == NULL){
-        exit(MEMORYEXIT); //check
+static tAgenDiff * findAgencyDiff(tAgenDiff * l, char * agency){
+    int c;
+    if(l == NULL || (c = strcasecmp(l->agencyName, agency)) == 0){
+        return l;
     }
-
-    tAgencies * aux = findAgency(ticket->first, agency);
-    if(aux == NULL){
-        return -1;
-    }
-    return aux->minFine;
+    return findAgencyDiff(l->tail, agency);
 }
 
-size_t maxAgencyFines(ticketsADT ticket, const char * agency){
+int minAgencyFines(ticketsADT ticket, const char * agency){
     if(ticket == NULL || agency == NULL){
+        perror(MEMORYEXIT);
         exit(MEMORYEXIT); //check
     }
 
-    tAgencies * aux = findAgency(ticket->first, agency);
+    tAgenDiff * aux = findAgencyDiff(ticket->firstDiff, agency);
     if(aux == NULL){
         return -1;
     }
-    return aux->maxFine;
+    return aux->min;
 }
 
-size_t diffAgencyFines(ticketsADT ticket,const char * agency){
+
+int maxAgencyFines(ticketsADT ticket, const char * agency){
     if(ticket == NULL || agency == NULL){
+        perror(MEMORYEXIT);
         exit(MEMORYEXIT); //check
     }
 
-    tAgencies * aux = findAgency(ticket->first, agency);
+    tAgenDiff * aux = findAgencyDiff(ticket->firstDiff, agency);
     if(aux == NULL){
         return -1;
     }
-    return aux->maxMinDiff;
+    return aux->max;
+}
+
+int diffAgencyFines(ticketsADT ticket,const char * agency){
+    if(ticket == NULL || agency == NULL){
+        perror(MEMORYEXIT);
+        exit(MEMORYEXIT); //check
+    }
+
+    tAgenDiff * aux = findAgencyDiff(ticket->firstDiff, agency);
+    if(aux == NULL){
+        return -1;
+    }
+    return aux->min;
 }
 
 static int cmpInf(const void *a, const void *b) {
@@ -266,23 +322,3 @@ void sortByAlph(ticketsADT ticket){
         qsort(aux->vecInfractions, aux->posibleInfraction, sizeof(tInfractions), &cmpInf);
     }
 }
-
-
-static int cmpDiff(const void * a, const void * b){
-    const tAgencies * agencyA = (const tAgencies *)a;
-    const tAgencies * agencyB = (const tAgencies *)b;
-
-    int cmp = agencyB->maxMinDiff - agencyA->maxMinDiff;
-    if(cmp == 0){
-        return strcasecmp(agencyA->agencyName, agencyB->agencyName);
-    }
-    return cmp;
-}
-
-void sortDiffByDesc(ticketsADT ticket){
-    if(ticket == NULL){
-        return;
-    }
-    
-}
-
