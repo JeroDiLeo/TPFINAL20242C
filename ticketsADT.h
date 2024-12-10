@@ -1,19 +1,17 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
-#include <ctype.h>
 
-typedef struct ticketCDT * ticketADT;
+
+#include <stdio.h>
+
+typedef struct ticketsCDT * ticketsADT;
 //Create new ticket and returns the new ticketsADT empty or NULL in case of memory error
-ticketADT newTicket(void);
+ticketsADT newTicket(void);
 
 /*Adds a new infraction
 @param ticket - refers to city
 @param id - number of identification of infraction
 @param name - name description of infraction
 */
-void addInfraction(ticketsADT ticket, size_t id, const char * name);
+void addInfraction(ticketsADT ticket, size_t id, const char * name, const char * agency, size_t fineAmount, size_t year, size_t month);
 
 /*Generates more space for the array of infractions
 @param ticket - refers to the city
