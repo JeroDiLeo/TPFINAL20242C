@@ -4,12 +4,9 @@
 #include <string.h>
 #include <ctype.h>
 #include "ticketsADT.h"
-/*
+
 #define MEMORYERROR "wrong memory access"
 #define INVALIDARGUMENT "the argument is invalid"
-*/
-#define MEMORYERROR 1
-#define INVALIDARGUMENT 2
 #define MEMORYEXIT 1
 #define totalMonths 12
 
@@ -121,7 +118,7 @@ static tYears * searchFineRecYTD(tYears * l,size_t year,size_t month,size_t amou
 }
 static void createNewInfraction(tAgencies * l,const  char * name, size_t id){
     if( l == NULL){
-        exit(MEMORYERROR); //mod dsp
+        exit(MEMORYEXIT); //mod dsp
     }
     l->vecInfractions = realloc(l->vecInfractions, id * sizeof(tInfractions)); //expand the array
     if(l->vecInfractions == NULL){
@@ -189,7 +186,7 @@ static tAgencies * findOrCreateAgency(tAgencies * l, size_t id, const char * nam
         tAgencies * new = calloc(1, sizeof(tAgencies));
         if(new == NULL){
             perror(MEMORYERROR);
-            exit(MEMORYERROR); // cambiar dsp
+            exit(MEMORYEXIT); // cambiar dsp
         }
         new->agencyName = copyString(agency);
         new->tail = l;
@@ -222,7 +219,7 @@ static tAgencies * findOrCreateAgency(tAgencies * l, size_t id, const char * nam
 
 void addInfraction(ticketsADT ticket, size_t id, const char * name, const char * agency, size_t fineAmount, size_t year, size_t month){
     if(id <= 0 || !validDate(month, year)){ 
-        exit(MEMORYERROR); //check
+        exit(MEMORYEXIT); //check
     }
     ticket->first = findOrCreateAgency(ticket->first, id, name, agency, fineAmount, year, month, ticket->firstDiff); // recursive call to find agency
 }
