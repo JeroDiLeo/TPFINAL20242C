@@ -322,3 +322,46 @@ void sortByAlph(ticketsADT ticket){
         qsort(aux->vecInfractions, aux->posibleInfraction, sizeof(tInfractions), &cmpInf);
     }
 }
+
+
+static void freeAgencyDiff(tAgenDiff * l){
+    if(l == NULL){
+        return;
+    }
+    tAgenDiff * aux = l->tail;
+    free(l->agencyName);
+    free(l);
+    freeAgency(aux);
+}
+
+// frees YTD list
+static void freeYTD(tYears * l){
+    if(l == NULL){
+        return;
+    }
+    tYears * aux = l->tail;
+    free(l);
+    freeYTD(aux);
+}
+
+// frees agency list
+static void freeAgency(tAgencies * l){
+    if(l == NULL){
+        return;
+    }
+    tAgencies * aux = l->tail;
+    free(l->agencyName);
+    freeYTD(l->firstYTD);
+    for(size_t i = 0; i < l->posibleInfraction; i++){
+        free(l->vecInfractions[i].infractionName);
+    }
+    free(l->vecInfractions);
+    free(l);
+    freeAgency(aux);
+}
+
+void freeTicket(ticketsADT ticket){
+    freeAgency(ticket->first);
+    freeAgencyDiff(ticket->firstDiff);
+    free(ticket);
+}

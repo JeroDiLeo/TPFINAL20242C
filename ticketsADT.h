@@ -56,3 +56,6 @@ void sortByAlph(ticketsADT ticket);
 
 /*Set the agencies differences in descending order*/
 void sortDiffByDesc(ticketsADT ticket);
+
+// frees the reserved space for the ticket
+void freeTicket(ticketsADT ticket);
