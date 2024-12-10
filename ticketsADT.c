@@ -383,7 +383,7 @@ void freeTicket(ticketsADT ticket){
     free(ticket);
 }
 
-//-----Agregado-----------Revisar
+//-----Agregado-----------Revisar-----------
 const char *getInfractionDescription(ticketsADT tickets, size_t infractionId) {
     if (infractionId <= 0) {
         return NULL;
