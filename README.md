@@ -29,6 +29,10 @@ Para compilar el TP completo deberá acceder al directorio con los archivos fuen
 ```
 make
 ```
+o
+```
+make all
+```
 Si lo que se busca es utilizar el TP para la ciudad de New York City,deberá correr el siguiente comando en la terminal:
 ```
 make parkingTicketsNYC
