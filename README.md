@@ -1,18 +1,18 @@
 # TPFINAL20242Q
-##Primera Fecha 13/12
+## Primera Fecha 13/12
 
 #### Autores:
 - _Jerónimo Di Leo Muntaner 63051_
 - _Joaquín Pelufo 63623_
 
-##Queries
+## Queries
 
-###Query1
+### Query1
 Almacena en un archivo .csv el total de multas por agencia y por infracción de forma ordenada alfabéticamente por agencia y en caso de ser la misma, por orden alfabetico del nombre de la infracción.
-###Query2
+### Query2
 Almacena en un archivo .csv la recaudación YTD de un mes de una agencia, la cual consiste en la suma de los montos de todas
 multas emitidas por esa agencia desde el primer mes del año hasta ese mes inclusive. Está ordenado alfabéticamente por agencia y en caso de ser la misma, por orden cronológico por año y mes.
-###Query3
+### Query3
 Almacena en un archivo .csv los montos mínimos y máximos de todas las multas emitidas y la diferencia entre ellos de una agencia. Se encuentra ordenado en forma descendente por diferencia entre ambos montos y en caso de ser el mismo monto, por orden alfabético de agencia.
 
 
@@ -32,14 +32,14 @@ make parkingTicketsCHI
 ```
 
 ### Etapa de Ejecución
-####New York City
+#### New York City
 Luego de haber compilado correctamente el TP, para ejecutarlo correctamente se utiliza el siguiente comando:
 ```
 ./parkingTicketsNYC.out ticketsNYC.csv infractionsNYC.csv
 ```
 _parkingTicketsNYC.out_ es el nombre del ejecutable,  _ticketsNYC.csv_ es el archivo.csv que contiene la información de las multas de NYC, _infractionsNYC.csv_ es el archivo que contiene la información de las infracciones.
 
-####Chicago
+#### Chicago
 Luego de haber compilado correctamente el TP, para ejecutarlo correctamente se utiliza el siguiente comando:
 ```
 ./parkingTicketsCHI.out ticketsCHI.csv infractionsCHI.csv
