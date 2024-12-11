@@ -54,7 +54,7 @@ void readInfractionsCsv(const char *filename, ticketsADT tickets) {
     }
 
     fclose(file);
-    printf("Archivo de infracciones leído correctamente.\n");
+    printf("Infraction file read successfully.\n");
 }
 //Detects the format of the tickets file
 static void detectTicketsCsvFormat(const char *header,int *plateIdx, int *dateIdx, int *infractionIdx, int *fineIdx, int *agencyIdx){
