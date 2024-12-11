@@ -5,8 +5,8 @@
 - _Jerónimo Di Leo Muntaner 63051_
 - _Joaquín Pelufo 63623_
 ## Información de Contacto:
--_Jerónimo: jdileomuntaner@itba.edu.ar
--_Joaquín: jpelufo@itba.edu.ar
+- _Jerónimo: jdileomuntaner@itba.edu.ar
+- _Joaquín: jpelufo@itba.edu.ar
 ## Lista de Archivos Fuente y Encabezado
 ### Archivos Fuente
 #### -_main.c_ Gestiona la carga de archivos, la generacion de consultas y la liberacion de memoria
