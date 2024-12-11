@@ -415,7 +415,7 @@ void addInfraction(ticketsADT ticket, size_t id, const char *agency, size_t fine
         free(ticket);
     }
 
-// func responisable to carry out query 1
+// func responsible to carry out query 1
 void processQuery1(ticketsADT tickets, void (*callback)(const char *, const char *, size_t, void *), void *param) {
     tAgencies *agency = tickets->first;
     while (agency) {
@@ -429,7 +429,7 @@ void processQuery1(ticketsADT tickets, void (*callback)(const char *, const char
     }
 }
 
-// func responisable to carry out query 2
+// func responsible to carry out query 2
 void processQuery2(ticketsADT tickets, void (*callback)(const char *, size_t, size_t, size_t, void *), void *param) {
     tAgencies *agency = tickets->first;
 
@@ -459,7 +459,7 @@ static void iterateAndPrintAgencyDiffs(tAgenDiff *sortedList, void (*callback)(c
 static void freeSortedAgencyDiffList(tAgenDiff *sortedList);
 
 
-// func responisable to carry out query 
+// func responsible to carry out query 3
 void processQuery3(ticketsADT tickets, void (*callback)(const char *, size_t, size_t, size_t, void *), void *param) {
     tAgenDiff *sortedList = NULL;
     tAgenDiff *current = tickets->firstDiff;
