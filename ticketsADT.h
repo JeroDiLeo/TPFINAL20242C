@@ -57,18 +57,6 @@ void createInfraction(ticketsADT ticket, size_t id, const char * id_name);
 */
 void addInfraction(ticketsADT ticket, size_t id, const char * agency, size_t fineAmount, size_t year, size_t month);
 
-/*Generates more space for the array of infractions
-@param ticket - refers to the city
-*/
-void resize(ticketsADT ticket);
-
-/*@Returns amount of fines of an agency(Count)-Query1
-@param ticket - refers to city
-@param id - Identification of infraction
-@param agency - Refers to the agency name
-*/
-int maxFines(ticketsADT ticket, size_t id, const char * agency);
-
 /*@Returns total amount of fines from the beginning to a certain month -Query2
 @param ticket - refers to city
 @param agency - Refers to the agency name
@@ -77,33 +65,15 @@ int maxFines(ticketsADT ticket, size_t id, const char * agency);
 */
 int YTDfines(ticketsADT ticket, const char * agency,size_t year,size_t month);
 
-/*@Returns minimun amount of fine from an agency
-@param ticket - refers to city
-@param agency - Refers to the agency name
-*/
-int minAgencyFines(ticketsADT ticket, const char * agency);
-
-/*@Returns maximun amount of fine from an agency
-@param ticket - refers to city
-@param agency - Refers to the agency name
-*/
-int maxAgencyFines(ticketsADT ticket, const char * agency);
-
-/*@Returns difference amount of fine from an agency
-@param ticket - refers to city
-@param agency - Refers to the agency name
-*/
-int diffAgencyFines(ticketsADT ticket,const char * agency);
-
-/*Set the infractions in order alphabetically*/
+/*Set the infractions in order alphabetically for query 1*/
 void sortByAlph(ticketsADT ticket);
 
-/*Set the agencies differences in descending order*/
-void sortDiffByDesc(ticketsADT ticket);
+/*Set the agencies differences in descending order ???? */
+//void sortDiffByDesc(ticketsADT ticket);
 
 // frees the reserved space for the ticket
 void freeTicket(ticketsADT ticket);
-
+// function of comparison for query 3, descending order and alphabetical order
 int compareDiff(const tAgenDiff *a, const tAgenDiff *b);
 
 

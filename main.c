@@ -2,30 +2,36 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ticketsADT.h"
+#define OUTFILEERROR "Error in creating output file"
+#define OPENINFFILEERROR "Error opening infractions file"
+#define OPENFILEFINEERROR " Error opening the fine file"
+#define OUTPUTERRORQ1 "Error in creating output file for Query 1"
+#define OUTPUTERRORQ2 "Error in creating output file for Query 2"
+#define OUTPUTERRORQ3 "Error in creating output file for Query 3"
 
 #define MAX_LINE 1024
 
-// Creeate output
+// Create output
 FILE *createFile(const char *filename) {
     FILE *file = fopen(filename, "w");
     if (!file) {
-        perror("Error creando archivo de salida");
+        perror(OUTFILEERROR);
         exit(EXIT_FAILURE);
     }
     return file;
 }
 void readInfractionsCsv(const char *filename, ticketsADT tickets) {
-    printf("Leyendo archivo de infracciones: %s\n", filename);
+    printf("reading infractions file: %s\n", filename);
 
     FILE *file = fopen(filename, "r");
     if (!file) {
-        perror("Error abriendo archivo de infracciones");
+        perror(OPENINFFILEERROR);
         exit(EXIT_FAILURE);
     }
 
     char line[MAX_LINE];
     if (!fgets(line, sizeof(line), file)) { // Read header
-        fprintf(stderr, "Error: No se pudo leer el encabezado del archivo de infracciones.\n");
+        fprintf(stderr, "Error: Could not read the headers of infraction file \n");
         fclose(file);
         exit(EXIT_FAILURE);
     }
@@ -36,7 +42,7 @@ void readInfractionsCsv(const char *filename, ticketsADT tickets) {
         char *description = strtok(NULL, "\n");
 
         if (!idStr || !description) {
-            printf("Línea inválida o incompleta: %s\n", line);
+            printf("Invalid or incomplete line: %s\n", line);
             continue;
         }
 
@@ -68,23 +74,23 @@ static void detectTicketsCsvFormat(const char *header,int *plateIdx, int *dateId
         *infractionIdx = 3; 
         *fineIdx = 4;
     } else {
-        fprintf(stderr, "Error: Formato de archivo de multas desconocido.\n");
+        fprintf(stderr, "Error: Unknown format for fine file.\n");
         exit(EXIT_FAILURE);
     }
 }
 
 static void readTicketsCsv(const char *filename, ticketsADT tickets) {
-    printf("Leyendo archivo de multas: %s\n", filename);
+    printf("Reading fine file: %s\n", filename);
 
     FILE *file = fopen(filename, "r");
     if (!file) {
-        perror("Error abriendo archivo de multas");
+        perror(OPENFILEFINEERROR);
         exit(EXIT_FAILURE);
     }
 
     char line[MAX_LINE];
     if (!fgets(line, sizeof(line), file)) {
-        fprintf(stderr, "Error: No se pudo leer el encabezado del archivo de multas.\n");
+        fprintf(stderr, "Erorr: Could not read the header of fine file.\n");
         fclose(file);
         exit(EXIT_FAILURE);
     }
@@ -94,7 +100,7 @@ static void readTicketsCsv(const char *filename, ticketsADT tickets) {
     detectTicketsCsvFormat(line, &plateIdx, &dateIdx, &infractionIdx, &fineIdx, &agencyIdx);
 
     while (fgets(line, sizeof(line), file)) {
-        line[strcspn(line, "\n")] = '\0'; // Remover el salto de línea
+        line[strcspn(line, "\n")] = '\0'; // Remove any line jump
 
         char *fields[5];
         int idx = 0;
@@ -106,7 +112,7 @@ static void readTicketsCsv(const char *filename, ticketsADT tickets) {
         }
 
         if (idx < 5) {
-            fprintf(stderr, "Línea inválida o incompleta: %s\n", line);
+            fprintf(stderr, "Invalid or incomplete line: %s\n", line);
             continue;
         }
 
@@ -116,7 +122,7 @@ static void readTicketsCsv(const char *filename, ticketsADT tickets) {
 
         int year, month;
         if (sscanf(fields[dateIdx], "%d-%d", &year, &month) != 2 || year < 1900 || month < 1 || month > 12) {
-            fprintf(stderr, "Fecha inválida en línea: %s\n", line);
+            fprintf(stderr, "Invalid date in line: %s\n", line);
             continue;
         }
 
@@ -125,9 +131,11 @@ static void readTicketsCsv(const char *filename, ticketsADT tickets) {
     }
 
     fclose(file);
-    printf("Archivo de multas leído correctamente.\n");
+    printf("Fine file read successfully.\n");
 }
- // Función callback para escribir cada resultado en el archivo
+//----------Query1-------------------------------
+
+ // Function callback to copy results in the file
     void printQuery1(const char *agency, const char *infraction, size_t count, void *param) {
         
         fprintf((FILE *)param, "%s;%s;%zu\n", agency, infraction, count);
@@ -135,22 +143,23 @@ static void readTicketsCsv(const char *filename, ticketsADT tickets) {
 void generateQuery1(ticketsADT tickets, const char *outputFile) {
     
     
-    // Crear archivo de salida
+    // create output file
     FILE *file = fopen(outputFile, "w");
     if (!file) {
-        perror("Error creando archivo de salida para Query 1");
+        perror(OUTPUTERRORQ1);
         exit(EXIT_FAILURE);
     }
 
     // header of file query1.CSV
     fprintf(file, "Agency;Infraction;Tickets\n");
 
-    // Process data
+    // Process the data
     processQuery1(tickets, printQuery1, file);
 
     fclose(file);
-    printf("Query 1 generada correctamente en %s\n", outputFile);
+    printf("Query 1 successfully generated in: %s\n", outputFile);
 }
+//----------Query2-------------------------------
 
 void printQuery2(const char *agency, size_t year, size_t month, size_t ytd, void *param) {
     FILE *file = (FILE *)param;
@@ -163,17 +172,17 @@ void generateQuery2(ticketsADT tickets, const char *outputFile) {
 
     FILE *file = fopen(outputFile, "w");
     if (!file) {
-        perror("Error creando archivo de salida para Query 2");
+        perror(OUTPUTERRORQ2);
         exit(EXIT_FAILURE);
     }
     // header of file query2.CSV
     fprintf(file, "Agency;Year;Month;YTD\n");
 
-    // Process data
+    // Process the data
     processQuery2(tickets, printQuery2, file);
 
     fclose(file);
-    printf("Query 2 generada correctamente en %s\n", outputFile);
+    printf("Query 2 generated successfully in: %s\n", outputFile);
 }
 //----------Query3-------------------------------
 
@@ -188,7 +197,7 @@ void generateQuery3(ticketsADT tickets, const char *outputFile) {
 
     FILE *file = fopen(outputFile, "w");
     if (!file) {
-        perror("Error creando archivo de salida para Query 3");
+        perror(OUTPUTERRORQ3);
         exit(EXIT_FAILURE);
     }
     // header of file query3.CSV
@@ -197,7 +206,7 @@ void generateQuery3(ticketsADT tickets, const char *outputFile) {
     processQuery3(tickets, printQuery3, file);
 
     fclose(file);
-    printf("Query 3 generada correctamente en %s\n", outputFile);
+    printf("Query 3 generated successfully in: %s\n", outputFile);
 }
 
 
@@ -205,18 +214,18 @@ void generateQuery3(ticketsADT tickets, const char *outputFile) {
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
-        fprintf(stderr, "Uso: %s <ticketsFile> <infractionsFile>\n", argv[0]);
+        fprintf(stderr, "Use: %s <ticketsFile> <infractionsFile>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
     ticketsADT tickets = newTicket();
 
-    // read Infractions
+    // reads Infractions
     readInfractionsCsv(argv[2], tickets);
 
-    // read tickets
+    // reads  tickets
     readTicketsCsv(argv[1], tickets);
-    //Order the each Agency infractions
+    //sort each infraction in alphabetical order
     sortByAlph(tickets);
    
     generateQuery1(tickets, "query1.csv");
@@ -225,6 +234,6 @@ int main(int argc, char *argv[]) {
     
     freeTicket(tickets);
 
-    printf("Procesamiento completado.\n");
+    printf("Successfully finished task! \n");
     return 0;
 }
