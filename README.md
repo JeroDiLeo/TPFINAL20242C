@@ -4,6 +4,13 @@
 #### Autores:
 - _Jerónimo Di Leo Muntaner 63051_
 - _Joaquín Pelufo 63623_
+## Lista de Archivos Fuente y Encabezado
+### Archivos Fuente
+#### -_main.c_ Gestiona la carga de archivos, la generacion de consultas y la liberacion de memoria
+#### -_ticketsADT.c_ Implementa todas las funciones relacionadas con el manejo de multas de estacionamiento y procesamiento de consultas. Contiene toda la lógica para gestionar agencias, infracciones y sus estadísticas.
+
+### Archivo de Encabezado
+#### -_ticketsADT.h_ Declara todas las funciones utilizadas en el ADT.c
 
 ## Queries
 
