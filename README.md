@@ -17,7 +17,7 @@ Almacena en un archivo .csv los montos mínimos y máximos de todas las multas e
 
 
 
-### Etapa de Compilación
+## Etapa de Compilación
 Para compilar el TP completo deberá acceder al directorio con los archivos fuentes, y luego correr el siguiente comando en la terminal:
 ```
 make
@@ -31,7 +31,7 @@ Si se deseaba utilizar el TP solo para la ciudad de Chicago, deberá correr el s
 make parkingTicketsCHI
 ```
 
-### Etapa de Ejecución
+## Etapa de Ejecución
 #### New York City
 Luego de haber compilado correctamente el TP, para ejecutarlo correctamente se utiliza el siguiente comando:
 ```
