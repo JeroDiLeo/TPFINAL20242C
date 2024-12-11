@@ -104,9 +104,11 @@ void sortDiffByDesc(ticketsADT ticket);
 // frees the reserved space for the ticket
 void freeTicket(ticketsADT ticket);
 
+int compareDiff(const tAgenDiff *a, const tAgenDiff *b);
+
 
 const char *getInfractionDescription(ticketsADT tickets, size_t id);
 
 void processQuery1(ticketsADT tickets, void (*callback)(const char *, const char *, size_t, void *), void *param);
-// void processQuery2(ticketsADT tickets, void (*callback)(const char *, size_t, size_t, size_t, void *), void *param);
-// void processQuery3(ticketsADT tickets, void (*callback)(const char *, size_t, size_t, size_t, void *), void *param);
+void processQuery2(ticketsADT tickets, void (*callback)(const char *, size_t, size_t, size_t, void *), void *param);
+void processQuery3(ticketsADT tickets, void (*callback)(const char *, size_t, size_t, size_t, void *), void *param);
