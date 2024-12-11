@@ -8,8 +8,7 @@
     #define MEMORYERROR "wrong memory access"
     #define INVALIDARGUMENT "the argument is invalid"
     #define MEMORYEXIT 1
-    /*
-#define totalMonths 12
+    #define totalMonths 12
     typedef struct tYears{
         size_t year;
         size_t months[totalMonths];
@@ -51,7 +50,6 @@
         tAgencies * first;
         tAgenDiff * firstDiff;
     }ticketsCDT;
-    */
 
     int strcasecmp(const char *str1, const char *str2);
     // function that validates the date (defensive programming)

@@ -1,47 +1,8 @@
 #include <stdio.h>
-#define totalMonths 12
-    typedef struct tYears{
-        size_t year;
-        size_t months[totalMonths];
-        struct tYears * tail;
-    }tYears;
-//Struct for the arr of Infractions for infractions.csv
-    typedef struct tInfNameId{
-        char * infractionName;
-    }tInfNameId;
-//Struct for the arr of Infractions of each agency
-    typedef struct tInfranctions{
-        char * infractionName; //ESTO
-        size_t fineCount; //How many times appears
-    }tInfractions;
-
-
-    typedef struct tAgencies{
-        char * agencyName;
-        tYears * firstYTD;
-        size_t dimYears;
-        size_t minFine;
-        size_t maxFine;
-        tInfractions * vecInfractions; //ESTO
-        // size_t dimReal;     //Dim real
-        size_t posibleInfraction; //Espacio reservado ESTO 
-        struct tAgencies * tail;
-    }tAgencies;
-
-    typedef struct tAgenDiff{ // agency in alphabetical order and descending order of diff
-        char * agencyName;
-        size_t diff;
-        size_t max;
-        size_t min;
-        struct tAgenDiff * tail;
-    }tAgenDiff;
-
-    typedef struct ticketsCDT{
-        tInfNameId * vecInfraction; //para infractions.csv
-        size_t vecSize;
-        tAgencies * first;
-        tAgenDiff * firstDiff;
-    }ticketsCDT;
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <ctype.h>
 
 typedef struct ticketsCDT * ticketsADT;
 //Create new ticket and returns the new ticketsADT empty or NULL in case of memory error
@@ -68,13 +29,9 @@ int YTDfines(ticketsADT ticket, const char * agency,size_t year,size_t month);
 /*Set the infractions in order alphabetically for query 1*/
 void sortByAlph(ticketsADT ticket);
 
-/*Set the agencies differences in descending order ???? */
-//void sortDiffByDesc(ticketsADT ticket);
-
 // frees the reserved space for the ticket
 void freeTicket(ticketsADT ticket);
-// function of comparison for query 3, descending order and alphabetical order
-int compareDiff(const tAgenDiff *a, const tAgenDiff *b);
+
 
 
 const char *getInfractionDescription(ticketsADT tickets, size_t id);
