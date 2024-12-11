@@ -451,48 +451,62 @@ void processQuery2(ticketsADT tickets, void (*callback)(const char *, size_t, si
     }
 }
 
+//extra function for query3 to insert a given agency into a sorted linked list based on fine diff
+static void insertSortedAgencyDiff(tAgenDiff **sortedList, tAgenDiff *current);
+//extra function for query3 to iterate through the sorted list and invokes the callback function for each agency 
+static void iterateAndPrintAgencyDiffs(tAgenDiff *sortedList, void (*callback)(const char *, size_t, size_t, size_t, void *), void *param);
+//extra function for query3 to free all memory allocated for the sorted linked lists
+static void freeSortedAgencyDiffList(tAgenDiff *sortedList);
+
+
 // func responisable to carry out query 
 void processQuery3(ticketsADT tickets, void (*callback)(const char *, size_t, size_t, size_t, void *), void *param) {
     tAgenDiff *sortedList = NULL;
     tAgenDiff *current = tickets->firstDiff;
 
-    // create a temporary list in the order we want
     while (current != NULL) {
-        tAgenDiff **insertPoint = &sortedList;
-        while (*insertPoint != NULL && 
-              ((*insertPoint)->diff > current->diff || 
-              ((*insertPoint)->diff == current->diff && strcasecmp((*insertPoint)->agencyName, current->agencyName) < 0))) {
-            insertPoint = &(*insertPoint)->tail;
-        }
-
-        tAgenDiff *newNode = malloc(sizeof(tAgenDiff));
-        if (newNode == NULL) {
-            perror(MEMORYERROR);
-            exit(MEMORYEXIT);
-        }
-        *newNode = *current;  // copy the structure
-        newNode->tail = *insertPoint;
-        *insertPoint = newNode;
-
+        insertSortedAgencyDiff(&sortedList, current);
         current = current->tail;
     }
 
-    // Imprimir datos
-    current = sortedList;
+    iterateAndPrintAgencyDiffs(sortedList, callback, param);
+    freeSortedAgencyDiffList(sortedList);
+}
+
+static void insertSortedAgencyDiff(tAgenDiff **sortedList, tAgenDiff *current) {
+    tAgenDiff **insertPoint = sortedList;
+
+    while (*insertPoint != NULL && 
+           ((*insertPoint)->diff > current->diff ||
+            ((*insertPoint)->diff == current->diff && 
+             strcasecmp((*insertPoint)->agencyName, current->agencyName) < 0))) {
+        insertPoint = &(*insertPoint)->tail;
+    }
+
+    tAgenDiff *newNode = malloc(sizeof(tAgenDiff));
+    if (newNode == NULL) {
+        perror("Memory Allocation Error");
+        exit(EXIT_FAILURE);
+    }
+
+    *newNode = *current;
+    newNode->tail = *insertPoint;
+    *insertPoint = newNode;
+}
+
+static void iterateAndPrintAgencyDiffs(tAgenDiff *sortedList, void (*callback)(const char *, size_t, size_t, size_t, void *), void *param) {
+    tAgenDiff *current = sortedList;
+
     while (current != NULL) {
         callback(current->agencyName, current->min, current->max, current->diff, param);
         current = current->tail;
     }
-
-    // Liberar memoria temporal
-    while (sortedList != NULL) {    //Without this, generates memory leaks
-        tAgenDiff *aux = sortedList->tail;
-        free(sortedList);  // No liberar agencyName, solo estructura
-        sortedList = aux;
-    }
 }
 
-
-
-
-
+static void freeSortedAgencyDiffList(tAgenDiff *sortedList) {
+    while (sortedList != NULL) {
+        tAgenDiff *nextNode = sortedList->tail;
+        free(sortedList);
+        sortedList = nextNode;
+    }
+}
