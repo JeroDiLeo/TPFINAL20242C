@@ -1,7 +1,7 @@
 # TPFINAL20242Q
 ## Primera Fecha 13/12
 
-#### Autores:
+## Autores:
 - _Jerónimo Di Leo Muntaner 63051_
 - _Joaquín Pelufo 63623_
 ## Lista de Archivos Fuente y Encabezado
