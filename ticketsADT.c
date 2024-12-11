@@ -11,7 +11,7 @@
     #define totalMonths 12
     typedef struct tYears{
         size_t year;
-        size_t months[totalMonths];
+        size_t months[totalMonths]; //static arr to store fineAmount per month
         struct tYears * tail;
     }tYears;
 //Struct for the arr of Infractions for infractions.csv
@@ -20,35 +20,35 @@
     }tInfNameId;
 //Struct for the arr of Infractions of each agency
     typedef struct tInfranctions{
-        char * infractionName; //ESTO
+        char * infractionName; 
         size_t fineCount; //How many times appears
     }tInfractions;
 
 
     typedef struct tAgencies{
         char * agencyName;
-        tYears * firstYTD;
+        tYears * firstYTD;  //List of total fine amount per agency per year and month
         size_t dimYears;
         size_t minFine;
         size_t maxFine;
-        tInfractions * vecInfractions; //ESTO
-        size_t posibleInfraction; //Espacio reservado ESTO 
+        tInfractions * vecInfractions; 
+        size_t posibleInfraction; //Reserved memory
         struct tAgencies * tail;
     }tAgencies;
 
     typedef struct tAgenDiff{ // agency in alphabetical order and descending order of diff
-        char * agencyName;
+        char * agencyName;      //Name of agency
         size_t diff;
         size_t max;
         size_t min;
-        struct tAgenDiff * tail;
+        struct tAgenDiff * tail;    //next agency
     }tAgenDiff;
 
     typedef struct ticketsCDT{
-        tInfNameId * vecInfraction; //para infractions.csv
-        size_t vecSize;
-        tAgencies * first;
-        tAgenDiff * firstDiff;
+        tInfNameId * vecInfraction; //for infractions.csv
+        size_t vecSize;             //Reserved memory
+        tAgencies * first;          // List of Agencies
+        tAgenDiff * firstDiff;      //List of Agencies used for query3(Only stores maxFine,minFine and the difference between them)
     }ticketsCDT;
 
     int strcasecmp(const char *str1, const char *str2);
@@ -78,7 +78,8 @@
         }
         return new;
     }
-    //searches the agency, and returns a copy 
+
+    //searches the agency
     static tAgencies * findAgency(tAgencies * l, const char * agency){
         int c;
         if(agency==NULL){
@@ -92,6 +93,7 @@
         }
         return findAgency(l->tail, agency);
     }
+
     // searches the year
     static tYears * findYTD(tYears * l, size_t year){
         int c = l->year - year;
